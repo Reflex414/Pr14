@@ -1,0 +1,145 @@
+﻿<Page x:Class="Pr14.LoginPage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:local="clr-namespace:Pr14"
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      mc:Ignorable="d" 
+      d:DesignHeight="450" d:DesignWidth="800"
+      Title="Вход в систему"
+      Background="#E8F5E9">
+
+    <Grid Background="#E8F5E9">
+        <Border Width="400" 
+                Height="380" 
+                Background="White" 
+                CornerRadius="15" 
+                BorderBrush="#C8E6C9" 
+                BorderThickness="1"
+                HorizontalAlignment="Center" 
+                VerticalAlignment="Center">
+            <Border.Effect>
+                <DropShadowEffect BlurRadius="15" 
+                                 ShadowDepth="3" 
+                                 Opacity="0.15" 
+                                 Direction="270"/>
+            </Border.Effect>
+
+            <StackPanel Margin="35">
+
+                <TextBlock Text="Вход в систему" 
+                          FontSize="26" 
+                          FontWeight="SemiBold" 
+                          Foreground="#1B5E20" 
+                          HorizontalAlignment="Center" 
+                          Margin="0,0,0,25"/>
+
+                <TextBlock Text="Логин" 
+                          Margin="0,0,0,5" 
+                          Foreground="#2E7D32" 
+                          FontWeight="Medium"
+                          FontSize="13"/>
+                <TextBox x:Name="LoginTextBox" 
+                        Height="38" 
+                        Padding="10" 
+                        BorderBrush="#A5D6A7" 
+                        BorderThickness="1"
+                        Margin="0,0,0,15"
+                        FontSize="13"
+                        Background="#F9F9F9">
+                    <TextBox.Resources>
+                        <Style TargetType="Border">
+                            <Setter Property="CornerRadius" Value="8"/>
+                        </Style>
+                    </TextBox.Resources>
+                </TextBox>
+
+                <TextBlock Text="Пароль" 
+                          Margin="0,0,0,5" 
+                          Foreground="#2E7D32" 
+                          FontWeight="Medium"
+                          FontSize="13"/>
+                <PasswordBox x:Name="PasswordBox" 
+                           Height="38" 
+                           Padding="10" 
+                           BorderBrush="#A5D6A7" 
+                           BorderThickness="1"
+                           Margin="0,0,0,25"
+                           FontSize="13"
+                           Background="#F9F9F9">
+                    <PasswordBox.Resources>
+                        <Style TargetType="Border">
+                            <Setter Property="CornerRadius" Value="8"/>
+                        </Style>
+                    </PasswordBox.Resources>
+                </PasswordBox>
+
+                <Button x:Name="LoginButton" 
+                       Content="Войти" 
+                       Height="42" 
+                       Background="#2E7D32" 
+                       Foreground="White" 
+                       FontWeight="SemiBold" 
+                       FontSize="15"
+                       BorderThickness="0"
+                       Margin="0,0,0,20"
+                       Cursor="Hand"
+                       Click="LoginButton_Click">
+                    <Button.Resources>
+                        <Style TargetType="Border">
+                            <Setter Property="CornerRadius" Value="8"/>
+                        </Style>
+                    </Button.Resources>
+                    <Button.Style>
+                        <Style TargetType="Button">
+                            <Setter Property="Opacity" Value="1"/>
+                            <Style.Triggers>
+                                <Trigger Property="IsMouseOver" Value="True">
+                                    <Setter Property="Background" Value="#388E3C"/>
+                                </Trigger>
+                            </Style.Triggers>
+                        </Style>
+                    </Button.Style>
+                </Button>
+
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                    <TextBlock Text="Нет аккаунта? " 
+                              Foreground="#666666"
+                              FontSize="13"
+                              VerticalAlignment="Center"/>
+                    <Button x:Name="RegisterLinkButton" 
+                           Content="Зарегистрироваться" 
+                           Background="Transparent" 
+                           BorderThickness="0"
+                           Foreground="#2E7D32"
+                           Cursor="Hand"
+                           FontSize="13"
+                           FontWeight="SemiBold"
+                           Click="RegisterLinkButton_Click">
+                        <Button.Resources>
+                            <Style TargetType="Border">
+                                <Setter Property="CornerRadius" Value="0"/>
+                            </Style>
+                        </Button.Resources>
+                        <Button.Style>
+                            <Style TargetType="Button">
+                                <Setter Property="Opacity" Value="1"/>
+                                <Style.Triggers>
+                                    <Trigger Property="IsMouseOver" Value="True">
+                                        <Setter Property="Foreground" Value="#388E3C"/>
+                                        <Setter Property="TextBlock.TextDecorations" Value="Underline"/>
+                                    </Trigger>
+                                </Style.Triggers>
+                            </Style>
+                        </Button.Style>
+                    </Button>
+                </StackPanel>
+
+                <Border Height="1" 
+                        Background="#E8F5E9" 
+                        Margin="0,20,0,0"
+                        CornerRadius="1"/>
+            </StackPanel>
+        </Border>
+    </Grid>
+</Page>
