@@ -1,24 +1,12 @@
-﻿using Pr14;
-using System;
-using System.Collections.Generic;
+﻿using System;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
-using System.Windows.Shapes;
+using Pr14;
 
 namespace Pr14
 {
-    /// <summary>
-    /// Логика взаимодействия для LoginPage.xaml
-    /// </summary>
     public partial class LoginPage : Page
     {
         public LoginPage()
@@ -28,61 +16,50 @@ namespace Pr14
 
         private void LoginButton_Click(object sender, RoutedEventArgs e)
         {
-            string login = LoginTextBox.Text.Trim();
-            string password = PasswordBox.Password;
+            Auth(LoginTextBox.Text.Trim(), PasswordBox.Password);
+        }
 
-
-            if (string.IsNullOrWhiteSpace(login) || string.IsNullOrWhiteSpace(password))
-            {
-                MessageBox.Show("Заполните все поля!", "Ошибка",
-                    MessageBoxButton.OK, MessageBoxImage.Error);
-                return;
-            }
-
+        public bool Auth(string login, string password)
+        {
             try
             {
-
-                var client = Core.Context.Client
-                    .Where(c => c.Login == login && c.Password == password)
-                    .FirstOrDefault();
+                var client = Core.Context.Client.AsNoTracking()
+                    .FirstOrDefault(c => c.Login == login && c.Password == password);
 
                 if (client != null)
                 {
-
                     CurrentUser.ClientId = client.ID;
                     CurrentUser.ClientLogin = client.Login;
                     CurrentUser.ClientName = client.Name;
-                    CurrentUser.ClientMail = client.Mail;
 
-                    MessageBox.Show($"Добро пожаловать, {client.Name}!",
-                        "Успешный вход", MessageBoxButton.OK, MessageBoxImage.Information);
-
-
-                    if (Application.Current.MainWindow is MainWindow mainWindow)
+                    if (Application.Current != null && Application.Current.MainWindow is MainWindow mainWindow)
                     {
                         mainWindow.UpdateAuthUI();
                     }
 
+                    if (LoginTextBox != null) LoginTextBox.Clear();
+                    if (PasswordBox != null) PasswordBox.Clear();
 
-                    NavigationService.GoBack();
+                    MessageBox.Show($"Добро пожаловать, {client.Name}!", "Успех", MessageBoxButton.OK, MessageBoxImage.Information);
+
+                    NavigationService?.GoBack();
+                    return true;
                 }
                 else
                 {
-                    MessageBox.Show("Неверный логин или пароль!", "Ошибка",
-                        MessageBoxButton.OK, MessageBoxImage.Error);
-                    PasswordBox.Password = "";
+                    MessageBox.Show("Неверный логин или пароль!", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
+                    return false;
                 }
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Ошибка при входе: {ex.Message}", "Ошибка",
-                    MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show($"Ошибка: {ex.Message}", "Критический сбой", MessageBoxButton.OK, MessageBoxImage.Error);
+                return false;
             }
         }
 
         private void RegisterLinkButton_Click(object sender, RoutedEventArgs e)
         {
-
             NavigationService.Navigate(new RegisterPage());
         }
     }

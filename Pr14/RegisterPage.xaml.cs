@@ -1,24 +1,12 @@
-﻿using Pr14;
-using System;
-using System.Collections.Generic;
+﻿using System;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
-using System.Windows.Shapes;
+using Pr14;
 
 namespace Pr14
 {
-    /// <summary>
-    /// Логика взаимодействия для RegisterPage.xaml
-    /// </summary>
     public partial class RegisterPage : Page
     {
         public RegisterPage()
@@ -28,95 +16,80 @@ namespace Pr14
 
         private void RegisterButton_Click(object sender, RoutedEventArgs e)
         {
-            string name = NameTextBox.Text.Trim();
-            string login = LoginTextBox.Text.Trim();
-            string mail = MailTextBox.Text.Trim();
-            string password = PasswordBox.Password;
-            string confirmPassword = ConfirmPasswordBox.Password;
+            Register(
+                NameTextBox.Text.Trim(),
+                LoginTextBox.Text.Trim(),
+                MailTextBox.Text.Trim(),
+                PasswordBox.Password,
+                ConfirmPasswordBox.Password
+            );
+        }
 
-
-            if (string.IsNullOrWhiteSpace(name) ||
-                string.IsNullOrWhiteSpace(login) ||
-                string.IsNullOrWhiteSpace(mail) ||
-                string.IsNullOrWhiteSpace(password))
+        public bool Register(string name, string login, string mail, string password, string confirmPassword)
+        {
+            if (string.IsNullOrWhiteSpace(name) || string.IsNullOrWhiteSpace(login) ||
+                string.IsNullOrWhiteSpace(mail) || string.IsNullOrWhiteSpace(password))
             {
-                MessageBox.Show("Заполните все обязательные поля (Имя, Логин, Почта, Пароль)!",
-                    "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
-                return;
-            }
-
-            if (!mail.Contains("@") || !mail.Contains("."))
-            {
-                MessageBox.Show("Введите корректный email адрес!", "Ошибка",
-                    MessageBoxButton.OK, MessageBoxImage.Error);
-                return;
+                MessageBox.Show("Заполните все обязательные поля!");
+                return false;
             }
 
             if (password != confirmPassword)
             {
-                MessageBox.Show("Пароли не совпадают!", "Ошибка",
-                    MessageBoxButton.OK, MessageBoxImage.Error);
-                ConfirmPasswordBox.Password = "";
-                return;
+                MessageBox.Show("Пароли не совпадают!");
+                return false;
             }
-
             if (password.Length < 3)
             {
-                MessageBox.Show("Пароль должен содержать минимум 3 символа!", "Ошибка",
-                    MessageBoxButton.OK, MessageBoxImage.Error);
-                return;
+                MessageBox.Show("Пароль слишком короткий! Минимум 3 символа.");
+                return false;
             }
 
-
-
-            var existingLogin = Core.Context.Client
-                .Where(c => c.Login == login)
-                .FirstOrDefault();
-
-            if (existingLogin != null)
+            if (!mail.Contains("@") || !mail.Contains("."))
             {
-                MessageBox.Show("Пользователь с таким логином уже существует!", "Ошибка",
-                    MessageBoxButton.OK, MessageBoxImage.Error);
-                return;
+                MessageBox.Show("Введите корректный email!");
+                return false;
             }
 
-
-            var existingMail = Core.Context.Client
-                .Where(c => c.Mail == mail)
-                .FirstOrDefault();
-
-            if (existingMail != null)
+            try
             {
-                MessageBox.Show("Пользователь с такой почтой уже зарегистрирован!", "Ошибка",
-                    MessageBoxButton.OK, MessageBoxImage.Error);
-                return;
+                if (Core.Context.Client.AsNoTracking().Any(c => c.Login == login))
+                {
+                    MessageBox.Show("Логин уже занят!");
+                    return false;
+                }
+
+                var newClient = new Client
+                {
+                    Name = name,
+                    Login = login,
+                    Mail = mail,
+                    Password = password
+                };
+
+                Core.Context.Client.Add(newClient);
+                Core.Context.SaveChanges();
+
+                MessageBox.Show("Регистрация успешна!");
+                NavigationService?.GoBack();
+                return true;
             }
-
-
-            var newClient = new Client
+            catch (Exception ex)
             {
-                Name = name,
-                Login = login,
-                Mail = mail,
-                Password = password
-            };
-
-            Core.Context.Client.Add(newClient);
-            Core.Context.SaveChanges();
-
-            MessageBox.Show("Регистрация прошла успешно! Теперь вы можете войти в систему.",
-                "Успех", MessageBoxButton.OK, MessageBoxImage.Information);
-
-
-            NavigationService.GoBack();
-
-
+                MessageBox.Show($"Ошибка регистрации: {ex.Message}");
+                return false;
+            }
         }
-
         private void LoginLinkButton_Click(object sender, RoutedEventArgs e)
         {
-
-            NavigationService.GoBack();
+            if (NavigationService.CanGoBack)
+            {
+                NavigationService.GoBack();
+            }
+            else
+            {
+                NavigationService.Navigate(new LoginPage());
+            }
         }
     }
 }
